@@ -3,6 +3,7 @@ import {
   ADD_TO_CART,
   CHANGE_QUANTITY,
   DELETE_ITEM,
+  LOCAL_STORAGE,
   SHOW_DETAIL,
   SUBTRACT,
 } from "../constants/shoe.constants";
@@ -13,48 +14,49 @@ const initialState = {
   cartArray: [],
 };
 
-export const shoeReducer = (
-  state = initialState,
-  { type, payload, action }
-) => {
+export const persistedState = localStorage.getItem(LOCAL_STORAGE)
+  ? JSON.parse(localStorage.getItem(LOCAL_STORAGE))
+  : {};
+
+export const shoeReducer = (state = initialState, { type, payload }) => {
   switch (type) {
     case SHOW_DETAIL: {
-      let dataShoeDetail = state.dataShoe.filter((item) => {
-        return item.id === payload.id;
-      });
-      console.log("dataShoeDetail: ", dataShoeDetail);
-      state.detailShoe = dataShoeDetail[0];
-      return { ...state };
+      return {
+        ...state,
+        detailShoe: state.dataShoe.find((item) => {
+          return item.id === payload.id;
+        }),
+      };
     }
     case ADD_TO_CART: {
       let cartItem = { ...payload, quantity: 1 };
       let cloneCart = [...state.cartArray];
-      let cartIndex = cloneCart.findIndex((item) => {
-        return item.id === cartItem.id;
+      let itemIndex = cloneCart.findIndex(({ id }) => {
+        return id === cartItem.id;
       });
-      if (cartIndex === -1) {
-        cloneCart.push(cartItem);
+      if (itemIndex === -1) {
+        return { ...state, cartArray: [...state.cartArray, cartItem] };
       } else {
-        cloneCart[cartIndex].quantity++;
+        cloneCart[itemIndex].quantity++;
+        return {
+          ...state,
+          cartArray: cloneCart,
+        };
       }
-      state.cartArray = cloneCart;
-      return { ...state };
     }
     case DELETE_ITEM: {
-      let deletedArray = state.cartArray.filter((item) => {
-        return item.id !== payload.id;
-      });
-      state.cartArray = deletedArray;
-      console.log("deletedArray: ", deletedArray);
-      return { ...state };
+      return {
+        ...state,
+        cartArray: state.cartArray.filter(({ id }) => {
+          return id !== payload.id;
+        }),
+      };
     }
     case CHANGE_QUANTITY: {
       let cartArray = [...state.cartArray];
-      let cartIndex = cartArray.findIndex((item) => {
-        return item.id === payload.id;
-      });
+      let cartIndex = cartArray.findIndex(({ id }) => id === payload.value.id);
       let _quantity = cartArray[cartIndex].quantity;
-      switch (action) {
+      switch (payload.action) {
         case ADD: {
           _quantity++;
           break;
@@ -71,8 +73,7 @@ export const shoeReducer = (
       } else {
         cartArray[cartIndex].quantity = _quantity;
       }
-      state.cartArray = cartArray;
-      return { ...state };
+      return { ...state, cartArray: cartArray };
     }
     default:
       return state;

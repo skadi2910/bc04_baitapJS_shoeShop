@@ -4,3 +4,4 @@ export const DELETE_ITEM = "DELETE_ITEM";
 export const CHANGE_QUANTITY = "CHANGE_QUANTITY";
 export const ADD = "ADD";
 export const SUBTRACT = "SUBTRACT";
+export const LOCAL_STORAGE = "LOCAL_STORAGE";

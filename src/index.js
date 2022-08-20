@@ -6,11 +6,16 @@ import reportWebVitals from "./reportWebVitals";
 import { createStore } from "redux";
 import { rootReducer } from "./container/reducers/rootReducer";
 import { Provider } from "react-redux";
-let store = createStore(
+import { persistedState } from "./container/reducers/shoeReducer";
+import { LOCAL_STORAGE } from "./container/constants/shoe.constants";
+const store = createStore(
   rootReducer,
+  persistedState,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-
+store.subscribe(() => {
+  localStorage.setItem(LOCAL_STORAGE, JSON.stringify(store.getState()));
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

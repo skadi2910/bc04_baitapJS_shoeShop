@@ -29,7 +29,6 @@ export const deleteItem = (value) => {
 export const changeQuantity = (action, value) => {
   return {
     type: CHANGE_QUANTITY,
-    payload: value,
-    action: action,
+    payload: { action, value },
   };
 };
