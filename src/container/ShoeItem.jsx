@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-
-export default class ShoeItem extends Component {
+import { connect } from "react-redux";
+import { addToCart, showDetails } from "./actions/shoe.action";
+class ShoeItem extends Component {
   render() {
-    let { name, image, id, price, shortDescription, alias } = this.props.data;
+    let { name, image, price, shortDescription, alias } = this.props.data;
     return (
       <div>
         <div className="card h-100" style={{ width: "20rem" }}>
@@ -16,7 +17,7 @@ export default class ShoeItem extends Component {
               data-bs-toggle="modal"
               data-bs-target="#shoeDetailModal"
               onClick={() => {
-                this.props.handleViewDetail(id);
+                this.props.handleShowDetail(this.props.data);
               }}
             >
               Details
@@ -35,3 +36,14 @@ export default class ShoeItem extends Component {
     );
   }
 }
+
+const mapDispatchToProps = (disPatch) => ({
+  handleShowDetail: (value) => {
+    disPatch(showDetails(value));
+  },
+  handleAddToCart: (value) => {
+    disPatch(addToCart(value));
+  },
+});
+
+export default connect(null, mapDispatchToProps)(ShoeItem);

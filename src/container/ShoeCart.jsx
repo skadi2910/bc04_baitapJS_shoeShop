@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-
-export default class ShoeCart extends Component {
+import { connect } from "react-redux";
+import { changeQuantity, deleteItem } from "./actions/shoe.action";
+import { ADD, SUBTRACT } from "./constants/shoe.constants";
+export class ShoeCart extends Component {
   renderCartContent = () => {
     return this.props.data.map(
-      ({ id, name, price, image, quantity, alias }) => {
+      ({ id, name, price, image, quantity, alias }, index) => {
         return (
           <tr>
             <th scope="row">
@@ -21,7 +23,7 @@ export default class ShoeCart extends Component {
                   className="fa fa-minus mt-2"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    this.props.handleChangeQuantity("subtract", id);
+                    this.props.handleSubtractQuantity(this.props.data[index]);
                   }}
                 ></i>
                 <input
@@ -35,7 +37,7 @@ export default class ShoeCart extends Component {
                   className="fa fa-plus mt-2"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    this.props.handleChangeQuantity("add", id);
+                    this.props.handleAddQuantity(this.props.data[index]);
                   }}
                 ></i>
               </div>
@@ -45,7 +47,7 @@ export default class ShoeCart extends Component {
             <td>
               <button
                 onClick={() => {
-                  this.props.handleDeleteItem(id);
+                  this.props.handleDeleteItem(this.props.data[index]);
                 }}
                 className="btn btn-danger"
               >
@@ -100,3 +102,20 @@ export default class ShoeCart extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  data: state.shoeReducer.cartArray,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  handleDeleteItem: (value) => {
+    dispatch(deleteItem(value));
+  },
+  handleSubtractQuantity: (value) => {
+    dispatch(changeQuantity(SUBTRACT, value));
+  },
+  handleAddQuantity: (value) => {
+    dispatch(changeQuantity(ADD, value));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShoeCart);

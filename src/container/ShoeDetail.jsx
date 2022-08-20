@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { addToCart } from "./actions/shoe.action";
 
-export default class ShoeDetail extends Component {
+export class ShoeDetail extends Component {
   render() {
-    let { id, image, name, price, description, alias } = this.props.data;
+    let { image, name, price, description, alias } = this.props.detailShoe;
     return (
       <div
         className="modal fade"
@@ -56,7 +58,7 @@ export default class ShoeDetail extends Component {
               </button>
               <button
                 onClick={() => {
-                  this.props.handleAddToCart(this.props.data);
+                  this.props.handleAddToCart(this.props.detailShoe);
                 }}
                 type="button"
                 className="btn btn-primary"
@@ -70,3 +72,14 @@ export default class ShoeDetail extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  detailShoe: state.shoeReducer.detailShoe,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  handleAddToCart: (value) => {
+    dispatch(addToCart(value));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShoeDetail);
